@@ -1,13 +1,19 @@
-// import { ConnectButton } from "thirdweb/react";
-import { client, chain } from "../src/client";
 import React from "react";
 import Login from "../components/Login";
-import DEX from "../components/DEX";
-import { useActiveAccount, useContractEvents, useReadContract } from "thirdweb/react";
-import { getContract } from "thirdweb";
+import Dex from "../components/DEX";
+import {  TOKEN_CONTRACT, DEX_CONTRACT } from "../src/client";
+import { useActiveWallet, useReadContract } from "thirdweb/react";
+
 
 export function App() {
-  const address = useActiveAccount();
+
+  const wallet = useActiveWallet();
+
+
+
+  // const {contract: tokenContract } = useReadContract(TOKEN_CONTRACT.address);
+  // const {contract: dexContract } = useContract(DEX_CONTRACT.address);
+
 
 
 
@@ -19,17 +25,19 @@ export function App() {
         <Login />
       </div>
 
-      <div className="mt-[30px]">
-        <h1>Here is my contract</h1>
-        
+      <div>
+        <Dex />
       </div>
 
-
     </>
-  );
+  )
 }
 
-function useSDK() {
-  throw new Error("Function not implemented.");
-}
 
+{/* <div className="mt-[30px]">
+  <h1>Here is my contract</h1>
+  <div className="h-[50vh] w-[70%] mx-auto">
+    <DEX />
+  </div>
+  
+</div> */}
