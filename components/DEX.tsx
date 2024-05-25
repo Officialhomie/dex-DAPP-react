@@ -1,71 +1,62 @@
-import { useActiveAccount, useReadContract } from "thirdweb/react";
-import {  TOKEN_CONTRACT, DEX_CONTRACT } from "../src/client";
-import { readContract, resolveMethod } from "thirdweb";
 import DexSymbol  from "../components/DexSymbol";
 import TokenSymbol  from "../components/TokenSymbol";
-import  UserTokenBalance  from "../components/UserTokenBalance";
+import  TokenBalanceH  from "./TokenBalanceH";
+import  TokenBalanceD  from "../components/TokenBalanceD";
 import  TokensInContract  from "../components/TokensInContract";
+import WalletBalance from "../components/WalletBalance";
+import UserWalletAddress from "../components/ConnectedWallet";
+import TokenApproval from "../components/TokenApproval";
+import { TOKEN_CONTRACT, DEX_CONTRACT} from "../src/client";
+import TokenSwap from "../components/SwapETHToToken"
+import { useState } from "react";
 
 
 
 
 
 
-
-
-
-
-
-    interface AmountOfTokensProps {
-        inputAmount: bigint;
-        inputReserve: bigint;
-        outputReserve: bigint;
-    }
-
-export const AmountOfTokens: React.FC<AmountOfTokensProps> = ({ inputAmount, inputReserve, outputReserve }) => { // Binding element 'inputReserve' implicitly has an 'any' type.
-
-    const { data: amountOfTokens, isLoading, error } = useReadContract({
-    contract: DEX_CONTRACT,
-    method: "getAmountOfTokens",
-    params: [inputAmount, inputReserve, outputReserve]
-    });
-
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
-
-    console.log("Amount of Tokens:", amountOfTokens);  
-
-    return (
-        <div>
-        <div>
-            <strong>Input Amount:</strong> {inputAmount.toString()}
-        </div>
-        <div>
-            <strong>Input Reserve:</strong> {inputReserve.toString()}
-        </div>
-        <div>
-            <strong>Output Reserve:</strong> {outputReserve.toString()}
-        </div>
-        </div>
-    );
-}
 
 
 const Dex  = () => {
-    // const address = useActiveAccount();
 
-    const inputAmount = BigInt(1n);
-    const inputReserve = BigInt(5n); 
-    const outputReserve = BigInt(10n); 
+    const contract = TOKEN_CONTRACT;  // Replace with the actual token contract address
+    const spender = "0xD6377b270c1DB5d42187da8d38cEEf0A68c2f4b6";  // Replace with the actual spender address
+    const amount = BigInt(100);  // Replace with the actual amount
+
+    const [swapAmount, setSwapAmount] = useState("");
+    const [ethSpender, setEthSpender] =  useState<string | null>(null); 
+
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSwapAmount(e.target.value);
+    };
     
     return(
         <>
-            <DexSymbol />
-            <TokenSymbol />
+        <div>
+            <UserWalletAddress setSpender={setEthSpender} />
+            <div className="flex items-center justify-between">
+                <DexSymbol  />
+                <TokenSymbol />
+            </div>
             <TokensInContract />
-            <UserTokenBalance />
-            <AmountOfTokens inputAmount={inputAmount} inputReserve={inputReserve} outputReserve={outputReserve} />
+            <div className="yes flex items-center justify-between text-black bg-white">
+                <TokenBalanceH />
+                <TokenBalanceD />
+            </div>
+            <div className="border border-green-400 h-full ">
+                <WalletBalance />
+            </div>
 
+            <TokenApproval contract={contract} spender={spender} amount={amount} />
+
+            <div>
+                <h1>Token Swap</h1>
+                <input type="text" placeholder="Enter amount" value={swapAmount} 
+                    onChange={handleAmountChange}
+                />
+                <TokenSwap contract={DEX_CONTRACT} spender={ethSpender || ' '} amount={swapAmount} />
+            </div>
+        </div>
         </>
     )
 };
