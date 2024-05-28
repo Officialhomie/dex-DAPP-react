@@ -7,7 +7,7 @@ import WalletBalance from "../components/WalletBalance";
 import UserWalletAddress from "../components/ConnectedWallet";
 import TokenApproval from "../components/TokenApproval";
 import { TOKEN_CONTRACT, DEX_CONTRACT} from "../src/client";
-import TokenSwap from "../components/SwapETHToToken"
+import TokenSwap from "../components/Test"
 import { useState } from "react";
 
 
@@ -48,14 +48,21 @@ const Dex  = () => {
             </div>
 
             <TokenApproval contract={contract} spender={spender} amount={amount} />
+            
 
             <div>
                 <h1>Token Swap</h1>
-                <input type="text" placeholder="Enter amount" value={swapAmount} 
+                <input type="number" placeholder="Enter amount" value={swapAmount} min="0"
                     onChange={handleAmountChange}
                 />
-                <TokenSwap contract={DEX_CONTRACT} spender={ethSpender || ' '} amount={swapAmount} />
+                {/* <TokenSwap contract={DEX_CONTRACT} spender={ethSpender || ' '} amount={swapAmount} /> */}
+            </div> 
+
+            <div className="mt-5 h-16 w-full bg-pink-700 p-4">
+
             </div>
+
+            <TokenSwap/>
         </div>
         </>
     )

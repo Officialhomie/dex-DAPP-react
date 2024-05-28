@@ -14,8 +14,6 @@ const TokenSymbol = () => {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
-    console.log("Symbol:", symbol);  
-
     return (
     <div>
         Symbol: {symbol}

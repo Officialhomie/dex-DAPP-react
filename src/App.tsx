@@ -15,9 +15,9 @@ export function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
 
-  useEffect(() =>{
-    console.log(wallet);
-  },[])
+  // useEffect(() =>{
+  //   console.log(wallet);
+  // },[])
 
   
   return (

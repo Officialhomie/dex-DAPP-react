@@ -2,12 +2,11 @@ import React from "react";
 import { getContract, prepareContractCall, resolveMethod } from "thirdweb";
 import { approve } from "thirdweb/extensions/erc20";
 import { useSendTransaction } from "thirdweb/react";
-import { DEX_CONTRACT, client, chain } from "../src/client";
-
+import { DEX_CONTRACT } from "../src/client";
 
 interface TokenSwapProps {
     contract: any;  // Define the contract type properly
-    spender: string;
+    spender: string | null;
     amount: string;
 }
 
@@ -16,21 +15,31 @@ const TokenSwap: React.FC<TokenSwapProps> = ({ contract, spender, amount }) => {
   
   
   const handleSwap = async () => {
-      try {
-      // Convert amount to BigInt if necessary
+    if (parseFloat(amount) <= 0) {
+      console.error("Amount must be greater than 0");
+      return;
+    }
+    
+    try {
       const swapAmount = BigInt(amount);
 
-      // Prepare the transaction using the approve function
-      const tx = await approve({
-        contract,
-        spender,
-        amount: swapAmount.toString()  // Convert BigInt to string
-    });
+
+      const tx = prepareContractCall({
+        contract: DEX_CONTRACT,
+        method: "swapETHToToken",
+        params: [0, ["0xd79f2Ff09A0C5fe8cEA314176Ad43601ABC29152"], spender, Math.floor(Date.now() / 1000) + 60 * 20], 
+      });
+
+      const transaction = {
+        to: tx,
+        data: tx.data,
+        value: swapAmount.toString(), 
+      };
     
       // Send the prepared transaction
-      await sendTransaction(tx);
-    } catch (error) {
-        console.error("Error swapping tokens:", error);
+      await sendTransaction(transaction); 
+      console.log(transaction);
+      console.error("Error swapping tokens:", error as Error);
     }
 };
 
@@ -47,26 +56,3 @@ return (
 
 export default TokenSwap;
 
-//   const handleSwap = async () => {
-//     try {
-    //       const swapTransaction = await prepareContractCall({
-        //         contract: DEX_CONTRACT,
-        //         method: "swapETHToToken", // 
-        //         params: ["0xRecipientAddress", ["0xd79f2Ff09A0C5fe8cEA314176Ad43601ABC29152"], Date.now() + 1000 * 60 * 10] // Example params
-        //       });
-        
-        //       await sendTransaction(swapTransaction);
-        //     } catch (error) {
-            //       console.error("Error swapping tokens:", error);
-            //     }
-//   };
-
-            // const dexContractAddress = "0xYourDEXContractAddress"; // Replace with your DEX contract address
-            // const dexContractAbi = [ /* Your DEX contract ABI */ ];
-            
-            // const DEX_CONTRACT = getContract({
-            //   client,
-            //   chain,
-            //   address: dexContractAddress,
-            //   abi: dexContractAbi,
-            // });
